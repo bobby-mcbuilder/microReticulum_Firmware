@@ -41,10 +41,12 @@ jobs:
       run: make prep
 
     - name: Determine Sketch name
-      run: echo Sketch name $(basename $GITHUB_WORKSPACE)
+      run: |
+        echo Sketch name $(basename $GITHUB_WORKSPACE)
+        echo SKETCH_NAME=$(basename $GITHUB_WORKSPACE) >> $GITHUB_ENV
 
     - name: Rename INO workaround
-      run: mv RNode_Firmware_CE.ino microReticulum_Firmware.ino
+      run: mv RNode_Firmware_CE.ino ${{ env.SKETCH_NAME }}.ino
 
     - name: Compile ${{ matrix.platform }}
       run: make firmware-${{ matrix.platform }} ${{ github.event.inputs.verbose_make == 'false' && 'V=0' || 'V=1' }}

@@ -40,13 +40,16 @@ jobs:
     - name: Install dependencies
       run: make prep
 
+    - name: Determine Sketch name
+      run: echo Sketch name $(basename $GITHUB_WORKSPACE)
+
     - name: Rename INO workaround
       run: mv RNode_Firmware_CE.ino microReticulum_Firmware.ino
 
     - name: Compile ${{ matrix.platform }}
       run: make firmware-${{ matrix.platform }} ${{ github.event.inputs.verbose_make == 'false' && 'V=0' || 'V=1' }}
 
-    - name: Archive firmware artifacts
+    - name: Archive rak4631 artifacts
       if: ${{ matrix.platform == 'rak4631'}}
       uses: actions/upload-artifact@v4
       with:
@@ -55,7 +58,7 @@ jobs:
           build/rakwireless.nrf52.WisCoreRAK4631Board/microReticulum_Firmware.ino.zip
         retention-days: 7
 
-    - name: Archive firmware artifacts
+    - name: Archive heltec32_v3 artifacts
       if: ${{ matrix.platform == 'heltec32_v3'}}
       uses: actions/upload-artifact@v4
       with:

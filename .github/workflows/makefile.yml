@@ -41,3 +41,42 @@ jobs:
 
     - name: Compile nRF52
       run: make firmware-rak4631
+
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Setup Arduino CLI
+      uses: arduino/setup-arduino-cli@v2
+
+    - name: Cache Arduino Cores
+      uses: actions/cache@v6
+      with:
+        path: ~/.arduino15
+        key: ${{ runner.os }}-arduino15-${{ hashFiles('**/platform.local.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-arduino15-
+
+    - name: Update Arduino Core Index
+      run: make prep-index
+      # issue: https://github.com/liberatedsystems/RNode_Firmware_CE/issues/125
+      continue-on-error: true
+
+    - name: Install dependencies
+      run: make prep
+
+    - name: Rename INO workaround
+      # TODO determine sketch name by directory
+      run: mv RNode_Firmware_CE.ino microReticulum_Firmware.ino
+
+    - name: Package rak4631
+      run: make release-rak4631
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: rak4631
+        path: |
+          Release/rnode_firmware_rak4631.zip

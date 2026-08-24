@@ -4,6 +4,8 @@ on:
   push:
     branches: [ "liberatedsystems-master" ]
 
+  workflow_dispatch: {}
+
 jobs:
   build:
 

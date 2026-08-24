@@ -18,7 +18,7 @@ jobs:
       uses: arduino/setup-arduino-cli@v2
 
     - name: Install dependencies
-      run: make ep
+      run: make prep
 
     - name: Compile ESP32
       run: make firmware-heltec32_v3

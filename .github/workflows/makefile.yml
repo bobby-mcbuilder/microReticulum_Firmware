@@ -25,6 +25,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-arduino15-
 
+    - name: Update Arduino Core Index
+      run: make prep-index
+
     - name: Install dependencies
       run: make prep
 

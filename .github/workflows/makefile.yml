@@ -17,6 +17,14 @@ jobs:
     - name: Setup Arduino CLI
       uses: arduino/setup-arduino-cli@v2
 
+    - name: Cache Arduino Cores
+      uses: actions/cache@v3
+      with:
+        path: ~/.arduino15
+        key: ${{ runner.os }}-arduino15-${{ hashFiles('**/platform.local.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-arduino15-
+
     - name: Install dependencies
       run: make prep
 

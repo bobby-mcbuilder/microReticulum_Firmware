@@ -21,7 +21,7 @@ jobs:
       run: make prep
 
     - name: Rename INO workaround
-      run: mv RNode_Firmware_CE.ino liberatedsystems.ino
+      run: mv RNode_Firmware_CE.ino microReticulum_Firmware.ino
 
     - name: Compile ESP32
       run: make firmware-heltec32_v3

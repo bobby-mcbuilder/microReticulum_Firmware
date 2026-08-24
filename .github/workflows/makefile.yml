@@ -53,3 +53,14 @@ jobs:
         name: rak4631
         path: |
           build/rakwireless.nrf52.WisCoreRAK4631Board/microReticulum_Firmware.ino.zip
+
+    - name: Archive firmware artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: heltec32_v3
+        path: |
+          build/esp32.esp32.heltec_wifi_lora_32_V3/microReticulum_Firmware.ino.bin
+          build/esp32.esp32.heltec_wifi_lora_32_V3/microReticulum_Firmware.ino.bootloader.bin
+          build/esp32.esp32.heltec_wifi_lora_32_V3/microReticulum_Firmware.ino.partitions.bin
+
+

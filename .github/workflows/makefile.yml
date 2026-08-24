@@ -27,6 +27,8 @@ jobs:
 
     - name: Update Arduino Core Index
       run: make prep-index
+      # issue: https://github.com/liberatedsystems/RNode_Firmware_CE/issues/125
+      continue-on-error: true
 
     - name: Install dependencies
       run: make prep

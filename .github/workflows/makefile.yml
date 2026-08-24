@@ -15,7 +15,10 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [heltec32_v3, rak4631]
+        config:
+        - {platform: heltec32_v3}
+        - {platform: rak4631}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -48,11 +51,11 @@ jobs:
     - name: Rename INO workaround
       run: mv RNode_Firmware_CE.ino ${{ env.SKETCH_NAME }}.ino
 
-    - name: Compile ${{ matrix.platform }}
-      run: make firmware-${{ matrix.platform }} ${{ github.event.inputs.verbose_make == 'false' && 'V=0' || 'V=1' }}
+    - name: Compile ${{ matrix.config.platform }}
+      run: make firmware-${{ matrix.config.platform }} ${{ github.event.inputs.verbose_make == 'false' && 'V=0' || 'V=1' }}
 
     - name: Archive rak4631 artifacts
-      if: ${{ matrix.platform == 'rak4631'}}
+      if: ${{ matrix.config.platform == 'rak4631'}}
       uses: actions/upload-artifact@v4
       with:
         name: rak4631
@@ -61,7 +64,7 @@ jobs:
         retention-days: 7
 
     - name: Archive heltec32_v3 artifacts
-      if: ${{ matrix.platform == 'heltec32_v3'}}
+      if: ${{ matrix.config.platform == 'heltec32_v3'}}
       uses: actions/upload-artifact@v4
       with:
         name: heltec32_v3

@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         config:
-        - {platform: heltec32_v3}
-        - {platform: rak4631}
+        - {platform: heltec32_v3, arch: esp32}
+        - {platform: rak4631, arch: nrf}
 
     runs-on: ubuntu-latest
 
@@ -31,7 +31,7 @@ jobs:
       uses: actions/cache@v6
       with:
         path: ~/.arduino15
-        key: ${{ runner.os }}-arduino15-${{ hashFiles('**/platform.local.txt') }}
+        key: ${{ runner.os }}-arduino15-${{ matrix.config.arch }}-${{ hashFiles('**/platform.local.txt') }}
         restore-keys: |
           ${{ runner.os }}-arduino15-
 
@@ -40,8 +40,8 @@ jobs:
       # issue: https://github.com/liberatedsystems/RNode_Firmware_CE/issues/125
       continue-on-error: true
 
-    - name: Install dependencies
-      run: make prep
+    - name: Install ${{ matrix.config.arch }} dependencies
+      run: make prep-${{ matrix.config.arch }}
 
     - name: Determine Sketch name
       run: |

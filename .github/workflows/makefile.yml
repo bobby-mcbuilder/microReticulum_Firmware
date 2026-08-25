@@ -30,7 +30,9 @@ jobs:
     - name: Cache Arduino Cores
       uses: actions/cache@v6
       with:
-        path: ~/.arduino15
+        path: |
+          ~/.arduino15/packages
+          ~/.arduino15/libraries
         key: ${{ runner.os }}-arduino15-${{ matrix.config.arch }}-${{ hashFiles('**/platform.local.txt') }}
         restore-keys: |
           ${{ runner.os }}-arduino15-
@@ -59,6 +61,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: rak4631
+        archive: false # don't zip zip-files
         path: |
           build/rakwireless.nrf52.WisCoreRAK4631Board/microReticulum_Firmware.ino.zip
         retention-days: 7

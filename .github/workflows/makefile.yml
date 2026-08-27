@@ -33,7 +33,7 @@ jobs:
         path: |
           ~/.arduino15/packages
           ~/Arduino/libraries
-        key: ${{ runner.os }}-arduino-${{ matrix.config.arch }}-${{ hashFiles('Makefile') }}
+        key: ${{ runner.os }}-arduino-${{ hashFiles('Makefile') }}
         restore-keys: |
           ${{ runner.os }}-arduino-
 
@@ -42,8 +42,8 @@ jobs:
       # issue: https://github.com/liberatedsystems/RNode_Firmware_CE/issues/125
       continue-on-error: true
 
-    - name: Install ${{ matrix.config.arch }} dependencies
-      run: make prep-${{ matrix.config.arch }}
+    - name: Install dependencies (Cores, Libs, Tools)
+      run: make prep
 
     - name: Determine Sketch name
       run: |
@@ -62,10 +62,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.config.platform }}
-        archive: true
         path: |
           ${{ matrix.config.build_output_dir }}/*
         retention-days: 7
+        if-no-files-found: error
 
 
 

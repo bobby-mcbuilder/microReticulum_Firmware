@@ -51,8 +51,8 @@ jobs:
         echo SKETCH_NAME=$(basename $GITHUB_WORKSPACE) | tee --append $GITHUB_ENV
 
     - name: Rename INO-file workaround
-      # when working with Git Worktrees or GitHub fork-networks
-      if: ${{ hashFiles( env.SKETCH_NAME + '.ino' ) == '' }}
+      # when using Git worktrees or GitHub fork-networks
+      if: ${{ hashFiles( format('{0}.ino', env.SKETCH_NAME) ) == '' }}
       run: mv RNode_Firmware_CE.ino ${{ env.SKETCH_NAME }}.ino
 
     - name: Compile ${{ matrix.config.platform }}

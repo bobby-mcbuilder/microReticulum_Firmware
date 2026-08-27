@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         config:
-        - {platform: heltec32_v3, arch: esp32}
-        - {platform: rak4631, arch: nrf}
+        - {platform: heltec32_v3, arch: esp32, build_output_dir: build/esp32.esp32.heltec_wifi_lora_32_V3}
+        - {platform: rak4631, arch: nrf, build_output_dir: build/rakwireless.nrf52.WisCoreRAK4631Board}
 
     runs-on: ubuntu-latest
 
@@ -32,10 +32,10 @@ jobs:
       with:
         path: |
           ~/.arduino15/packages
-          ~/.arduino15/libraries
-        key: ${{ runner.os }}-arduino15-${{ matrix.config.arch }}-${{ hashFiles('**/platform.local.txt') }}
+          ~/Arduino/libraries
+        key: ${{ runner.os }}-arduino-${{ matrix.config.arch }}-${{ hashFiles('Makefile') }}
         restore-keys: |
-          ${{ runner.os }}-arduino15-
+          ${{ runner.os }}-arduino-
 
     - name: Update Arduino Core Index
       run: make prep-index
@@ -50,31 +50,22 @@ jobs:
         echo Sketch name $(basename $GITHUB_WORKSPACE)
         echo SKETCH_NAME=$(basename $GITHUB_WORKSPACE) >> $GITHUB_ENV
 
-    - name: Rename INO workaround
+    - name: Rename INO-file workaround
+      # when working with Git Worktrees or GitHub fork-networks
+      #if: ${{ env.SKETCH_NAME }}.ino does not exist
       run: mv RNode_Firmware_CE.ino ${{ env.SKETCH_NAME }}.ino
 
     - name: Compile ${{ matrix.config.platform }}
       run: make firmware-${{ matrix.config.platform }} ${{ github.event.inputs.verbose_make == 'false' && 'V=0' || 'V=1' }}
 
-    - name: Archive rak4631 artifacts
-      if: ${{ matrix.config.platform == 'rak4631'}}
+    - name: Archive ${{ matrix.config.platform }} artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: rak4631
-        archive: false # don't zip zip-files
+        name: ${{ matrix.config.platform }}
+        archive: true
         path: |
-          build/rakwireless.nrf52.WisCoreRAK4631Board/microReticulum_Firmware.ino.zip
+          ${{ matrix.config.build_output_dir }}/*
         retention-days: 7
 
-    - name: Archive heltec32_v3 artifacts
-      if: ${{ matrix.config.platform == 'heltec32_v3'}}
-      uses: actions/upload-artifact@v4
-      with:
-        name: heltec32_v3
-        path: |
-          build/esp32.esp32.heltec_wifi_lora_32_V3/microReticulum_Firmware.ino.bin
-          build/esp32.esp32.heltec_wifi_lora_32_V3/microReticulum_Firmware.ino.bootloader.bin
-          build/esp32.esp32.heltec_wifi_lora_32_V3/microReticulum_Firmware.ino.partitions.bin
-        retention-days: 7
 
 

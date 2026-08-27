@@ -27,15 +27,16 @@ jobs:
     - name: Setup Arduino CLI
       uses: arduino/setup-arduino-cli@v2
 
-    - name: Cache Arduino Cores
+    - name: Cache Arduino ${{ matrix.config.arch }} Cores, Libs & Index
       uses: actions/cache@v6
       with:
         path: |
+          ~/.arduino15/*
           ~/.arduino15/packages
           ~/Arduino/libraries
-        key: ${{ runner.os }}-arduino-${{ hashFiles('Makefile') }}
+        key: ${{ runner.os }}-arduino-${{ matrix.config.arch }}-${{ hashFiles('Makefile') }}
         restore-keys: |
-          ${{ runner.os }}-arduino-
+          ${{ runner.os }}-arduino-${{ matrix.config.arch }}-
 
     - name: Update Arduino Core Index
       run: make prep-index
@@ -43,16 +44,15 @@ jobs:
       continue-on-error: true
 
     - name: Install dependencies (Cores, Libs, Tools)
-      run: make prep
+      run: make prep-${{ matrix.config.arch }}
 
     - name: Determine Sketch name
       run: |
-        echo Sketch name $(basename $GITHUB_WORKSPACE)
-        echo SKETCH_NAME=$(basename $GITHUB_WORKSPACE) >> $GITHUB_ENV
+        echo SKETCH_NAME=$(basename $GITHUB_WORKSPACE) | tee --append $GITHUB_ENV
 
     - name: Rename INO-file workaround
       # when working with Git Worktrees or GitHub fork-networks
-      #if: ${{ env.SKETCH_NAME }}.ino does not exist
+      if: ${{ hashFiles( env.SKETCH_NAME + '.ino' ) == '' }}
       run: mv RNode_Firmware_CE.ino ${{ env.SKETCH_NAME }}.ino
 
     - name: Compile ${{ matrix.config.platform }}
